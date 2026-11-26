@@ -1,4 +1,4 @@
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-3.8-flash';
 
 function buildSystemInstruction(perfil) {
   const grupos = {
@@ -106,3 +106,4 @@ function buildOfflineDemoReply(prompt, perfil) {
   }
   return `¡Con gusto te ayudo con eso! (Modo Demo Local — agrega tu Gemini API Key en Perfil para respuestas en vivo):\n1. Ten a la mano tu identificación oficial (INE) y tu CURP.\n2. Acércate al módulo oficial o entra al portal gob.mx correspondiente.\n3. Llena el formulario con tu correo o teléfono activo.\n4. Guarda tu comprobante o número de folio para dar seguimiento.`;
 }
+

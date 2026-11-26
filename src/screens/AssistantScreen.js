@@ -204,7 +204,7 @@ export default function AssistantScreen({ navigation }) {
               Asistente <Text style={styles.titleGold}>NexoClaro</Text>
             </Text>
             <Text style={[styles.sub, { fontSize: fs(12) }]}>
-              Gemini 2.5 Flash · {perfil?.idioma === 'en' ? 'English' : 'Español'} ·{' '}
+              Gemini 3.8 Flash · {perfil?.idioma === 'en' ? 'English' : 'Español'} ·{' '}
               {perfil?.nivel_lectura === 'muy_sencillo' ? 'Muy sencillo' : 'Estándar'}
             </Text>
           </View>
