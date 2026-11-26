@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexoClaro — Boceto Oficial MVP (Fase 2)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 32px 20px;
+      line-height: 1.5;
+    }
+    .container { max-width: 1280px; margin: 0 auto; }
+    header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 28px 32px;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    header h1 { font-size: 28px; letter-spacing: -0.5px; }
+    header p { color: #cbd5e1; font-size: 15px; margin-top: 4px; }
+    .badge {
+      background: #2563eb;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 28px 0 16px;
+      color: #1e293b;
+      border-left: 4px solid #2563eb;
+      padding-left: 12px;
+    }
+    .phones-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 24px;
+    }
+    .phone-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .phone-label {
+      font-weight: 700;
+      font-size: 14px;
+      color: #334155;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .phone {
+      width: 280px;
+      height: 560px;
+      background: #ffffff;
+      border: 10px solid #0f172a;
+      border-radius: 34px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14);
+    }
+    .notch {
+      height: 22px;
+      background: #0f172a;
+      width: 110px;
+      margin: 0 auto;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    .screen-header {
+      padding: 12px 16px 10px;
+      background: #eff6ff;
+      border-bottom: 1px solid #dbeafe;
+    }
+    .screen-header h2 { font-size: 16px; color: #1e3a8a; }
+    .screen-header small { font-size: 11px; color: #475569; }
+    .screen-body {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .card {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .card.active {
+      background: #dbeafe;
+      border-color: #2563eb;
+      color: #1e3a8a;
+      font-weight: 600;
+    }
+    .btn {
+      background: #2563eb;
+      color: #fff;
+      text-align: center;
+      padding: 11px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .btn.secondary {
+      background: #0f766e;
+    }
+    .btn.outline {
+      background: #fff;
+      color: #1e293b;
+      border: 1.5px solid #94a3b8;
+    }
+    .cat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .cat-box {
+      padding: 14px 8px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      border: 1.5px solid #cbd5e1;
+    }
+    .cat-becas { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+    .cat-tramites { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+    .cat-salud { background: #dcfce7; border-color: #22c55e; color: #166534; }
+    .cat-empleo { background: #f3e8ff; border-color: #a855f7; color: #6b21a8; }
+    .chat-bubble {
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      max-width: 90%;
+    }
+    .chat-user {
+      background: #2563eb;
+      color: #fff;
+      align-self: flex-end;
+    }
+    .chat-ai {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      align-self: flex-start;
+    }
+    .voice-bar {
+      display: flex;
+      gap: 6px;
+      padding-top: 6px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #dcfce7;
+      color: #166534;
+    }
+    .tab-bar {
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 4px;
+      background: #f8fafc;
+      border-top: 1px solid #cbd5e1;
+      font-size: 10px;
+      font-weight: 700;
+      color: #475569;
+    }
+    .tab-bar span.on { color: #2563eb; }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 9px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .db-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .db-table {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      overflow: hidden;
+    }
+    .db-table h3 {
+      background: #1e293b;
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 14px;
+    }
+    .db-table ul {
+      list-style: none;
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+    .db-table li { padding: 3px 0; border-bottom: 1px dashed #e2e8f0; }
+    .db-table li:last-child { border-bottom: none; }
+    .pk { color: #d97706; font-weight: 700; }
+    .fk { color: #2563eb; font-weight: 700; }
+    footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 13px;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>NexoClaro — Boceto Visual y Arquitectura MVP</h1>
+        <p>Reto 1: Puentes de oportunidad (ODS 10) · Hackathon UVM 2026 · Equipo: Christian Duran, Oscar Perez, Santiago Velazquez</p>
+      </div>
+      <div class="badge">React Native (Expo) + SQLite + Gemini 2.5 Flash</div>
+    </header>
+
+    <div class="section-title">1. Flujo de Pantallas (App Móvil iOS &amp; Android)</div>
+    <div class="phones-grid">
+      <!-- Pantalla 1 -->
+      <div class="phone-wrap">
+        <div class="phone-label">Pantalla 1 · Mi Perfil Accesible</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen-header">
+            <h2>👋 Hola, configura tu guía</h2>
+            <small>Adaptamos las explicaciones para ti</small>
+          </div>
+          <div class="screen-body">
+            <strong>¿Cómo te podemos ayudar mejor?</strong>
+            <div class="card active">👵 Adulto mayor (letra grande)</div>
+            <div class="card">🎓 Estudiante 1ª generación</div>
+            <div class="card">🌎 Persona migrante</div>
+            <strong>Idioma preferido:</strong>
+            <div class="card active">🇲🇽 Español · Nivel: Muy sencillo</div>
+            <div class="card">🇺🇸 English · Simple mode</div>
+            <div style="margin-top:auto" class="btn">Guardar Perfil en SQLite</div>
+          </div>
+          <div class="tab-bar">
+            <span>Inicio</span><span>Asistente</span><span>Guías</span><span class="on">Perfil</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pantalla 2 -->
+      <div class="phone-wrap">
+        <div class="phone-label">Pantalla 2 · Inicio y Catálogo Offline</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen-header">
+            <h2>NexoClaro</h2>
+            <small><span class="pill">● Modo Offline Listo</span></small>
+          </div>
+          <div class="screen-body">
+            <div class="btn">🎙️ Preguntar por Voz o Texto a IA</div>
+            <strong>Explora sin internet:</strong>
+            <div class="cat-grid">
+              <div class="cat-box cat-becas">🎓 Becas</div>
+              <div class="cat-box cat-tramites">📄 Trámites</div>
+              <div class="cat-box cat-salud">🏥 Salud</div>
+              <div class="cat-box cat-empleo">💼 Empleo</div>
+            </div>
+            <strong>Guías rápidas precargadas:</strong>
+            <div class="card">
+              <strong>Beca Jóvenes Escribiendo el Futuro</strong><br/>
+              <small>4 pasos claros · Guardado local</small>
+            </div>
+            <div class="card">
+              <strong>Registro IMSS-Bienestar</strong><br/>
+              <small>3 pasos claros · Guardado local</small>
+            </div>
+          </div>
+          <div class="tab-bar">
+            <span class="on">Inicio</span><span>Asistente</span><span>Guías</span><span>Perfil</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pantalla 3 -->
+      <div class="phone-wrap">
+        <div class="phone-label">Pantalla 3 · Asistente IA (Voz + Texto)</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen-header">
+            <h2>🤖 Asistente NexoClaro</h2>
+            <small>Gemini · Lenguaje sencillo (Español)</small>
+          </div>
+          <div class="screen-body">
+            <div class="chat-bubble chat-user">
+              🎤 "No entiendo qué necesito para pedir una beca por primera vez."
+            </div>
+            <div class="chat-bubble chat-ai">
+              <strong>¡Con gusto te ayudo!</strong><br/>
+              1. Ten a la mano tu CURP.<br/>
+              2. Pide tu constancia de estudios en tu escuela.<br/>
+              3. Entra al portal oficial y registra tu correo.<br/><br/>
+              <span class="pill">🔊 Escuchar en voz alta</span>
+            </div>
+            <div class="btn secondary">💾 Guardar como Guía Offline</div>
+            <div class="voice-bar" style="margin-top:auto">
+              <div class="card" style="flex:1; padding:8px">Escribe tu duda...</div>
+              <div class="btn" style="padding:8px 12px">🎙️</div>
+            </div>
+          </div>
+          <div class="tab-bar">
+            <span>Inicio</span><span class="on">Asistente</span><span>Guías</span><span>Perfil</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pantalla 4 -->
+      <div class="phone-wrap">
+        <div class="phone-label">Pantalla 4 · Mis Guías (Checklist)</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen-header">
+            <h2>✅ Mis Guías Paso a Paso</h2>
+            <small>Guardadas en SQLite · Sin internet</small>
+          </div>
+          <div class="screen-body">
+            <div class="card active">
+              <strong>Beca Educativa (1ª Generación)</strong><br/>
+              <small>Progreso: 2 de 4 pasos listos</small>
+            </div>
+            <div class="check-item">☑️ <span><strong>Paso 1:</strong> Descargar e imprimir tu CURP oficial.</span></div>
+            <div class="check-item">☑️ <span><strong>Paso 2:</strong> Solicitar constancia escolar.</span></div>
+            <div class="check-item">⬜ <span><strong>Paso 3:</strong> Crear cuenta en el portal de becas.</span></div>
+            <div class="check-item">⬜ <span><strong>Paso 4:</strong> Subir documentos y guardar folio.</span></div>
+            <div class="btn outline" style="margin-top:auto">🔊 Leer pasos pendientes</div>
+          </div>
+          <div class="tab-bar">
+            <span>Inicio</span><span>Asistente</span><span class="on">Guías</span><span>Perfil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">2. Esquema de Base de Datos Estructurada (SQLite / MySQL Compatible)</div>
+    <div class="db-grid">
+      <div class="db-table">
+        <h3>perfil_usuario</h3>
+        <ul>
+          <li><span class="pk">PK</span> id (INT)</li>
+          <li>nombre (VARCHAR)</li>
+          <li>grupo_objetivo (VARCHAR)</li>
+          <li>idioma (VARCHAR)</li>
+          <li>nivel_lectura (VARCHAR)</li>
+          <li>texto_grande (BOOLEAN)</li>
+        </ul>
+      </div>
+      <div class="db-table">
+        <h3>servicios</h3>
+        <ul>
+          <li><span class="pk">PK</span> id (INT)</li>
+          <li>categoria (VARCHAR)</li>
+          <li>titulo (VARCHAR)</li>
+          <li>resumen_claro (TEXT)</li>
+          <li>requisitos (TEXT)</li>
+          <li>fuente_oficial (VARCHAR)</li>
+        </ul>
+      </div>
+      <div class="db-table">
+        <h3>pasos_servicio</h3>
+        <ul>
+          <li><span class="pk">PK</span> id (INT)</li>
+          <li><span class="fk">FK</span> servicio_id (INT → servicios.id)</li>
+          <li>orden (INT)</li>
+          <li>instruccion (TEXT)</li>
+          <li>completado (BOOLEAN)</li>
+        </ul>
+      </div>
+      <div class="db-table">
+        <h3>consultas_ia</h3>
+        <ul>
+          <li><span class="pk">PK</span> id (INT)</li>
+          <li><span class="fk">FK</span> perfil_id (INT → perfil_usuario.id)</li>
+          <li>pregunta (TEXT)</li>
+          <li>respuesta_gemini (TEXT)</li>
+          <li>idioma (VARCHAR)</li>
+          <li>fecha (DATETIME)</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      NexoClaro · Boceto de Diseño MVP · Hackathon Nacional de Innovación con IA — Ingenio Incluyente UVM 2026
+    </footer>
+  </div>
+</body>
+</html>
+
