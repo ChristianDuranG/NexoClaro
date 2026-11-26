@@ -14,21 +14,23 @@
 - **Mentor:** Ana Margarita Estrada Vargas
 
 ## ¿Qué es NexoClaro?
-Aplicación móvil inclusiva (iOS y Android) construida con **React Native + Expo**, **Google Gemini (`gemini-2.5-flash`)** y base de datos estructurada **SQLite (`expo-sqlite`)** que explica, traduce y guía paso a paso a adultos mayores, migrantes, estudiantes de primera generación y comunidades con baja conectividad para acceder a **becas, trámites oficiales, salud y empleo**.
+Aplicación móvil inclusiva (iOS y Android) construida con **React Native + Expo**, **Google Gemini (`gemini-3.8-flash`)** y base de datos estructurada **SQLite (`expo-sqlite`)** que explica, traduce y guía paso a paso a adultos mayores, migrantes, estudiantes de primera generación y comunidades con baja conectividad para acceder a **becas, trámites oficiales (SAT, CURP, Pensión Bienestar), salud (IMSS-Bienestar) y empleo**.
 
 ## Funcionalidades del MVP (Fase 3)
-1. **Perfil Accesible (`ProfileScreen`):** Selección de perfil (*Adulto mayor*, *Estudiante 1ª generación*, *Persona migrante*, *General*), idioma (*Español* / *English*), nivel de lectura, **Letra extra grande en vivo** y lectura automática en voz alta.
-2. **Catálogo Offline (`HomeScreen`):** 6 guías reales precargadas en **SQLite** (Becas, Trámites, Salud, Empleo) consultables sin internet con barra de progreso.
-3. **Asistente IA Multimodal (`AssistantScreen`):** Chat por texto y **grabación de voz con micrófono (`expo-av`)** conectado a **Gemini 2.5 Flash**, lectura en voz alta (`expo-speech`) y botón **Guardar Guía** para convertir cualquier respuesta en un checklist offline.
-4. **Checklists Interactivos (`GuidesScreen`):** Seguimiento paso a paso persistido en SQLite y lectura en voz alta de pasos pendientes.
+1. **Inicio y Catálogo Offline (`HomeScreen`):** Cuadrícula 2×2 (*Becas, Trámites, Salud, Empleo*) con **7 guías reales precargadas en SQLite** consultables sin internet, barra de progreso porcentual y enlaces directos a portales oficiales (`sat.gob.mx`, `gob.mx/curp`, `subes.becasbenitojuarez.gob.mx`, `registro.imssbienestar.gob.mx`).
+2. **Asistente IA Multimodal (`AssistantScreen`):** Chat por texto y **grabación de voz por micrófono (`expo-audio`)** conectado a **Gemini 3.8 Flash**, lectura en voz alta (`expo-speech`), **traducción Español ↔ Inglés** con un toque y botón **Guardar Guía** para convertir cualquier respuesta en un checklist offline.
+3. **Checklists Interactivos (`GuidesScreen`):** Seguimiento paso a paso persistido en SQLite, lectura en voz alta de pasos pendientes y botón directo para abrir el portal oficial.
+4. **Perfil Accesible (`ProfileScreen`):** Selección de perfil (*Adulto mayor*, *Estudiante 1ª generación*, *Persona migrante*, *General*), idioma (*Español / English*), nivel de lectura, **Letra extra grande en vivo** y lectura automática en voz alta.
 
-## Cómo ejecutar el proyecto
+## Cómo ejecutar el prototipo en tu celular (iOS o Android)
 ```bash
+git clone https://github.com/ChristianDuranG/NexoClaro.git
+cd NexoClaro
 npm install
-npx expo start
+npm run tunnel
 ```
 1. Instala **Expo Go** en tu iPhone (App Store) o Android (Play Store).
-2. Escanea el código QR generado por `npx expo start`.
+2. Escanea el código QR generado en la terminal.
 3. *(Opcional)* Pega tu **Gemini API Key** de [Google AI Studio](https://aistudio.google.com/) en la pestaña **Perfil** dentro de la app (o en `.env` como `EXPO_PUBLIC_GEMINI_API_KEY`).
 
 ## Documentación y Esquema de Base de Datos
