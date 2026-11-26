@@ -14,8 +14,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
-import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
+import {
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioRecorder,
+} from 'expo-audio';
+import { File } from 'expo-file-system';
 import { useApp } from '../context/AppContext';
 import { askGemini, extractStepsFromText } from '../services/gemini';
 import { saveConsultaIA, saveCustomGuide } from '../db/database';
@@ -48,7 +53,8 @@ export default function AssistantScreen({ navigation }) {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [recording, setRecording] = useState(null);
+  const [recording, setRecording] = useState(false);
+  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const [speakingId, setSpeakingId] = useState(null);
 
   const speakText = (msgId, text) => {
@@ -99,13 +105,12 @@ export default function AssistantScreen({ navigation }) {
       // Stop and send audio to Gemini
       setLoading(true);
       try {
-        await recording.stopAndUnloadAsync();
-        const uri = recording.getURI();
-        setRecording(null);
+        await recorder.stop();
+        const uri = recorder.uri;
+        setRecording(false);
+        if (!uri) throw new Error('No se generó el archivo de audio.');
 
-        const base64 = await FileSystem.readAsStringAsync(uri, {
-          encoding: FileSystem.EncodingType?.Base64 || 'base64',
-        });
+        const base64 = await new File(uri).base64();
 
         const userMsg = {
           id: `${Date.now()}-u`,
@@ -136,7 +141,7 @@ export default function AssistantScreen({ navigation }) {
           speakText(aiMsg.id, text);
         }
       } catch (err) {
-        setRecording(null);
+        setRecording(false);
         Alert.alert('Error de audio', err.message || 'No se pudo procesar el audio.');
       } finally {
         setLoading(false);
@@ -146,19 +151,15 @@ export default function AssistantScreen({ navigation }) {
 
     // Start recording
     try {
-      const perm = await Audio.requestPermissionsAsync();
+      const perm = await AudioModule.requestRecordingPermissionsAsync();
       if (!perm.granted) {
         Alert.alert('Permiso requerido', 'Activa el permiso del micrófono para hablar con NexoClaro.');
         return;
       }
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
-      const { recording: newRec } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
-      setRecording(newRec);
+      await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
+      await recorder.prepareToRecordAsync();
+      recorder.record();
+      setRecording(true);
     } catch (err) {
       Alert.alert('Micrófono', err.message || 'No se pudo iniciar la grabación.');
     }
@@ -414,3 +415,4 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 });
+
