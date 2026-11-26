@@ -165,6 +165,31 @@ export default function AssistantScreen({ navigation }) {
     }
   };
 
+  const handleTranslate = async (msg) => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const targetLang = isEn ? 'es' : 'en';
+      const prompt =
+        targetLang === 'en'
+          ? `Translate this guide to simple, clear English:\n${msg.text}`
+          : `Traduce esta guía a español sencillo y claro:\n${msg.text}`;
+      const { text } = await askGemini({
+        apiKey,
+        perfil: { ...perfil, idioma: targetLang },
+        textPrompt: prompt,
+      });
+      setMessages((prev) => [
+        ...prev,
+        { id: `${Date.now()}-tr`, role: 'ai', text, question: msg.question || 'Traducción' },
+      ]);
+    } catch (err) {
+      Alert.alert('Traducción', err.message || 'No se pudo traducir.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSaveAsChecklist = (msg) => {
     const steps = extractStepsFromText(msg.text);
     const title = (msg.question || 'Guía NexoClaro').slice(0, 48);
@@ -253,15 +278,27 @@ export default function AssistantScreen({ navigation }) {
                     </TouchableOpacity>
 
                     {m.id !== 'welcome' && (
-                      <TouchableOpacity
-                        style={[styles.actionPill, styles.savePill]}
-                        onPress={() => handleSaveAsChecklist(m)}
-                      >
-                        <Ionicons name="bookmark" size={15} color={COLORS.emerald} />
-                        <Text style={[styles.saveText, { fontSize: fs(12) }]}>
-                          {isEn ? 'Save Checklist' : 'Guardar Guía'}
-                        </Text>
-                      </TouchableOpacity>
+                      <>
+                        <TouchableOpacity
+                          style={styles.actionPill}
+                          onPress={() => handleTranslate(m)}
+                        >
+                          <Ionicons name="globe-outline" size={15} color={COLORS.gold} />
+                          <Text style={[styles.actionText, { fontSize: fs(12) }]}>
+                            {isEn ? 'Español' : 'Traducir EN'}
+                          </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          style={[styles.actionPill, styles.savePill]}
+                          onPress={() => handleSaveAsChecklist(m)}
+                        >
+                          <Ionicons name="bookmark" size={15} color={COLORS.emerald} />
+                          <Text style={[styles.saveText, { fontSize: fs(12) }]}>
+                            {isEn ? 'Save Checklist' : 'Guardar Guía'}
+                          </Text>
+                        </TouchableOpacity>
+                      </>
                     )}
                   </View>
                 )}

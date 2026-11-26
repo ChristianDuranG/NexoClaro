@@ -69,6 +69,43 @@ export function initDatabase() {
   if (!serviciosCount || serviciosCount.total === 0) {
     seedInitialServices(database);
   }
+
+  // Migración segura: asegurar guía del SAT y URLs completas con https://
+  const satExists = database.getFirstSync("SELECT COUNT(*) as total FROM servicios WHERE titulo LIKE '%SAT%';");
+  if (!satExists || satExists.total === 0) {
+    const resSat = database.runSync(
+      `INSERT INTO servicios (categoria, titulo, resumen_claro, requisitos, fuente_oficial)
+       VALUES (?, ?, ?, ?, ?);`,
+      [
+        'Trámites',
+        'Constancia de Situación Fiscal (SAT)',
+        'Documento oficial que comprueba tu RFC para trabajar, facturar o recibir pagos.',
+        'CURP, identificación oficial (INE) y correo electrónico personal.',
+        'https://www.sat.gob.mx/aplicacion/53027/genera-tu-constancia-de-situacion-fiscal',
+      ]
+    );
+    [
+      'Ten a la mano tu CURP y tu INE vigente.',
+      'Entra a satid.sat.gob.mx o al portal oficial del SAT.',
+      'Elige "Constancia de Situación Fiscal" y valida tu identidad con tu correo.',
+      'Descarga el PDF oficial y guárdalo en tu celular.',
+    ].forEach((inst, idx) => {
+      database.runSync(
+        `INSERT INTO pasos_servicio (servicio_id, orden, instruccion, completado) VALUES (?, ?, ?, 0);`,
+        [resSat.lastInsertRowId, idx + 1, inst]
+      );
+    });
+  }
+
+  // Normalizar URLs antiguas sin https://
+  database.execSync(`
+    UPDATE servicios
+    SET fuente_oficial = 'https://' || fuente_oficial
+    WHERE fuente_oficial IS NOT NULL
+      AND fuente_oficial != ''
+      AND fuente_oficial NOT LIKE 'http%'
+      AND fuente_oficial NOT LIKE 'Guía%';
+  `);
 }
 
 function seedInitialServices(database) {
@@ -250,3 +287,4 @@ export function getConsultasRecientes(limit = 15) {
     [limit]
   );
 }
+

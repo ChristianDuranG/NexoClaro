@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -123,6 +124,17 @@ export default function GuidesScreen() {
               <Text style={[styles.countText, { fontSize: fs(12) }]}>
                 {done} de {total} {isEn ? 'steps completed' : 'pasos completados'}
               </Text>
+              {currentService.fuente_oficial?.startsWith('http') && (
+                <TouchableOpacity
+                  style={styles.portalBtn}
+                  onPress={() => Linking.openURL(currentService.fuente_oficial)}
+                >
+                  <Ionicons name="open-outline" size={16} color={COLORS.white} />
+                  <Text style={[styles.portalText, { fontSize: fs(13) }]}>
+                    {isEn ? 'Open Official Website' : 'Abrir Página Oficial'}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </GlassCard>
 
             {/* Checklist de Pasos */}
@@ -220,6 +232,18 @@ const styles = StyleSheet.create({
   },
   barFill: { height: '100%', backgroundColor: COLORS.emerald, borderRadius: 999 },
   countText: { color: COLORS.muted, fontWeight: '600', marginTop: 6 },
+  portalBtn: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: COLORS.obsidian,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+  },
+  portalText: { color: COLORS.white, fontWeight: '700' },
   stepsList: { gap: 10, marginBottom: 18 },
   stepCard: {
     flexDirection: 'row',
@@ -251,3 +275,4 @@ const styles = StyleSheet.create({
   },
   voiceText: { fontWeight: '700', color: COLORS.obsidian },
 });
+
