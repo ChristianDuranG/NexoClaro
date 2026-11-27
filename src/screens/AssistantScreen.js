@@ -83,7 +83,7 @@ export default function AssistantScreen({ navigation }) {
     setLoading(true);
 
     try {
-      const { text } = await askGemini({ apiKey, perfil, textPrompt: q });
+      const { text } = await askGemini({ apiKey, perfil, textPrompt: q, history: messages });
       const aiMsg = { id: `${Date.now()}-a`, role: 'ai', text, question: q };
       setMessages((prev) => [...prev, aiMsg]);
       if (perfil?.id) {
@@ -123,6 +123,7 @@ export default function AssistantScreen({ navigation }) {
           apiKey,
           perfil,
           textPrompt: 'Consulta por voz',
+          history: messages,
           audioBase64: base64,
           audioMimeType: 'audio/m4a',
         });
@@ -224,14 +225,32 @@ export default function AssistantScreen({ navigation }) {
       >
         {/* Header */}
         <View style={styles.header}>
-          <View>
-            <Text style={[styles.title, { fontSize: fs(20) }]}>
-              Asistente <Text style={styles.titleGold}>NexoClaro</Text>
-            </Text>
-            <Text style={[styles.sub, { fontSize: fs(12) }]}>
-              Gemini 3.8 Flash · {perfil?.idioma === 'en' ? 'English' : 'Español'} ·{' '}
-              {perfil?.nivel_lectura === 'muy_sencillo' ? 'Muy sencillo' : 'Estándar'}
-            </Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View>
+              <Text style={[styles.title, { fontSize: fs(20) }]}>
+                Asistente <Text style={styles.titleGold}>NexoClaro</Text>
+              </Text>
+              <Text style={[styles.sub, { fontSize: fs(12) }]}>
+                Gemini 3.8 Flash · {perfil?.idioma === 'en' ? 'English' : 'Español'} ·{' '}
+                {perfil?.nivel_lectura === 'muy_sencillo' ? 'Muy sencillo' : 'Estándar'}
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: (apiKey || process.env.EXPO_PUBLIC_GEMINI_API_KEY) ? COLORS.emeraldLight : COLORS.goldLight },
+              ]}
+            >
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontWeight: '700',
+                  color: (apiKey || process.env.EXPO_PUBLIC_GEMINI_API_KEY) ? COLORS.emerald : COLORS.gold,
+                }}
+              >
+                {(apiKey || process.env.EXPO_PUBLIC_GEMINI_API_KEY) ? '● En vivo' : '● Sin API Key'}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -360,6 +379,7 @@ const styles = StyleSheet.create({
   title: { fontWeight: '800', color: COLORS.obsidian },
   titleGold: { fontStyle: 'italic', color: COLORS.gold },
   sub: { color: COLORS.muted, marginTop: 2 },
+  statusBadge: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999 },
   chipsRow: { paddingHorizontal: 16, paddingVertical: 10, gap: 8 },
   quickChip: {
     backgroundColor: COLORS.glassStrong,

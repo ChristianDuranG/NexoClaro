@@ -24,7 +24,14 @@ Formato obligatorio:
 - Termina indicando qué documento básico necesita tener a la mano.`;
 }
 
-export async function askGemini({ apiKey, perfil, textPrompt, audioBase64 = null, audioMimeType = 'audio/m4a' }) {
+export async function askGemini({
+  apiKey,
+  perfil,
+  textPrompt,
+  history = [],
+  audioBase64 = null,
+  audioMimeType = 'audio/m4a',
+}) {
   const cleanKey = (apiKey || process.env.EXPO_PUBLIC_GEMINI_API_KEY || '').trim();
 
   if (!cleanKey) {
@@ -33,6 +40,14 @@ export async function askGemini({ apiKey, perfil, textPrompt, audioBase64 = null
       isDemoFallback: true,
     };
   }
+
+  const contents = history
+    .filter((m) => m.id !== 'welcome' && m.text && !m.text.startsWith('🎙️'))
+    .slice(-8)
+    .map((m) => ({
+      role: m.role === 'user' ? 'user' : 'model',
+      parts: [{ text: m.text }],
+    }));
 
   const parts = [];
   if (audioBase64) {
@@ -51,6 +66,7 @@ export async function askGemini({ apiKey, perfil, textPrompt, audioBase64 = null
   } else {
     parts.push({ text: textPrompt });
   }
+  contents.push({ role: 'user', parts });
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${cleanKey}`,
@@ -61,10 +77,10 @@ export async function askGemini({ apiKey, perfil, textPrompt, audioBase64 = null
         systemInstruction: {
           parts: [{ text: buildSystemInstruction(perfil) }],
         },
-        contents: [{ role: 'user', parts }],
+        contents,
         generationConfig: {
-          temperature: 0.4,
-          maxOutputTokens: 600,
+          temperature: 0.5,
+          maxOutputTokens: 1400,
         },
       }),
     }
